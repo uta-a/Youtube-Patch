@@ -1,4 +1,4 @@
-/* cps回避 */
+/* trusted回避 */
 if(!trustedTypes.defaultPolicy) {
     trustedTypes.createPolicy('default', {
         createHTML: string => string,
@@ -8,14 +8,22 @@ if(!trustedTypes.defaultPolicy) {
 }
 
 /* Import JS Library */
-requireJS('https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js', notifySetup); /* 通知ライブラリ */
-requireCSS('https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css'); /* 通知ライブラリスタイル */
+requireJS('https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js',function() {
+
+    /* jQuery Plugins */
+    requireJS('//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js',startUpNotify);  /* Toastr.js */
+    requireCSS('//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css'); /* Toastr.css */
+
+});
+
+
+
 
 function requireJS(path, func = null) { /* 関数を指定してライブラリが読み込まれたときに実行できる */
     let elm = document.createElement('script');
     elm.src = path;
-    document.head.appendChild(elm);
     elm.onload = func;
+    document.head.appendChild(elm);
 }
 function requireCSS(path) {
     let elm = document.createElement('link');
@@ -26,48 +34,20 @@ function requireCSS(path) {
 
 
 /* 初期設定 */
-let notify;
-function notifySetup() {
-    notify = new Notyf({
-        duration: 2000,
-        position: {
-        x: 'right',
-        y: 'botton',
-        },
-        types: [
-            {
-                type: 'info',
-                background: '#4CAF50',
-            },
-            {
-                type: 'enable',
-                background: '#4CAF50',
-            },
-            {
-                type: 'disable',
-                background: '#B0BEC5',
-            }
-        ]
-    })
-
-    /* 起動通知 */
-    notify.open({
-        type: 'success',
-        dismissble: false,
-        positon: {
-            x:'right',
-            y:'botton'
-        },
-        message: '<patch style="font-size: 20px">YOUTUBE PATCHが正常に読みこまれました。'
-    })
+function startUpNotify() {
+    toastr.options = {
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "showDuration": "100",
+        "hideDuration": "100",
+        "timeOut": "3000",
+        "showEasing": "swing",
+        "hideEasing": "swing",
+        "showMethod": "slideDown", 
+        "hideMethod": "slideUp",
+    }
+    toastr.success('<patch style="font-size: 20px;">正常に読み込まれました</patch>','<patch style="font-size: 20px; font-weight: bold">Patch</patch>');
 }
-
-
-
-
-
-
-
 
 
 /* Skip Function */
@@ -99,35 +79,4 @@ function youtubeSkip() {
     }, 100);
 }
 
-/* Loopコントロール */
-function loopCtrl() {
-    document.addEventListener('keydown',e => {
-        if(e.key == 'Shift' && e.location == 2) {
-            const video = document.getElementsByClassName('html5-main-video')[0];
-            if(!video.loop) {
-                video.setAttribute('loop','');
-                notify.open({
-                    type: 'enable',
-                    dismissble: false,
-                    positon: {
-                        x:'right',
-                        y:'botton'
-                    },
-                    message: '<patch style="font-size: 20px">Loopが有効になりました。'
-                })
-            }
-            else {
-                video.removeAttribute('loop');
-                notify.open({
-                    type: 'disable',
-                    dismissble: false,
-                    positon: {
-                        x:'right',
-                        y:'botton'
-                    },
-                    message: '<patch style="font-size: 20px">Loopが無効になりました。'
-                })
-            }
-        }
-    })
-}
+/* Loop Function */
