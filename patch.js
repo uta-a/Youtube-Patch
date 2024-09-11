@@ -1,3 +1,5 @@
+/* pre */
+
 /* trusted回避 */
 if(!trustedTypes.defaultPolicy) {
     trustedTypes.createPolicy('default', {
